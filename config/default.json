@@ -1,0 +1,3 @@
+{
+  "mongoURI": "mongodb+srv://nodejs:StarterPack@cluster0.pw8nf.mongodb.net/F_DB?retryWrites=true&w=majority"
+}
