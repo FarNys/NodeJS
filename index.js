@@ -5,6 +5,7 @@ const connectDB = require("./config/db");
 const cors = require("cors");
 const productRouter = require("./routes/productRouter");
 const searchRouter = require("./routes/searchRouter");
+const registerRouter = require("./routes/registerRouter");
 
 dotenv.config({ path: "./config.env" });
 
@@ -28,6 +29,9 @@ app.use("/s", (req, res) => {
     msg: "Your Requests have coug",
   });
 });
+
+//AUTHENTICATION
+app.use("/api/v1/register", registerRouter);
 
 //PRODUCTS
 app.use("/api/v1/products", productRouter);
