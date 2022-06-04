@@ -6,6 +6,7 @@ const cors = require("cors");
 const productRouter = require("./routes/productRouter");
 const searchRouter = require("./routes/searchRouter");
 const registerRouter = require("./routes/registerRouter");
+const loginRouter = require("./routes/loginRouter");
 
 dotenv.config({ path: "./config.env" });
 
@@ -32,6 +33,7 @@ app.use("/s", (req, res) => {
 
 //AUTHENTICATION
 app.use("/api/v1/register", registerRouter);
+app.use("/api/v1/login", loginRouter);
 
 //PRODUCTS
 app.use("/api/v1/products", productRouter);
