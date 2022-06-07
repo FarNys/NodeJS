@@ -37,7 +37,38 @@ exports.createBlog = async (req, res) => {
   }
 };
 
-exports.unwindBlog = async (req, res) => {};
+exports.unwindBlog = async (req, res) => {
+  console.log(req);
+  try {
+    const getUnwind = await Blog.aggregate([
+      { $unwind: "$list" },
+      {
+        $match: {
+          point: { $gte: 0 },
+        },
+      },
+      // {
+      //   $group: {
+      //     _id: null,
+      //     items: { $push: "$title" },
+      //     sumPoint: { $sum: "$point" },
+      //     dataLength: { $sum: 1 },
+      //   },
+      // },
+      // {
+      //   $addFields: {
+      //     extraField: "$sumPoint",
+      //   },
+      // },
+      {
+        $project: { _id: 0, __v: 0 },
+      },
+    ]);
+    res.status(200).json(getUnwind);
+  } catch (error) {
+    res.status(500).json({ msg: "ServEr ErroR.!" });
+  }
+};
 
 exports.aggregateBlog = async (req, res) => {
   try {
