@@ -27,7 +27,7 @@ app.listen(PORT, (req, res) => {
 app.use("/s", (req, res) => {
   res.status(200).json({
     status: "success",
-    msg: "Your Requests have coug",
+    msg: "Your Requests have coug ss",
   });
 });
 
