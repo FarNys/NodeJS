@@ -1,11 +1,12 @@
 const express = require("express");
 const blogController = require("../controllers/blogController");
+const authMW = require("../middleware/authMW");
 const router = express.Router();
 
 router
   .route("/")
   .get(blogController.getAllBlogs)
-  .post(blogController.createBlog)
+  .post(authMW, blogController.createBlog)
   .delete(blogController.deleteAllBlogs);
 //   .post(productController.saveProducts);
 

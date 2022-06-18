@@ -1,3 +1,4 @@
+const catchAsync = require("../utils/catchAsync");
 const Blog = require("./../models/Blog");
 
 exports.getAllBlogs = async (req, res) => {
@@ -21,21 +22,18 @@ exports.deleteAllBlogs = async (req, res) => {
   }
 };
 
-exports.createBlog = async (req, res) => {
+exports.createBlog = catchAsync(async (req, res, next) => {
   const { title, desc, point, list } = req.body;
-  try {
-    const newBlog = new Blog({
-      title,
-      desc,
-      point,
-      list,
-    });
-    await newBlog.save();
-    res.status(201).json({ msg: "Blog Created" });
-  } catch (error) {
-    console.log(error);
-  }
-};
+
+  const newBlog = new Blog({
+    title,
+    desc,
+    point,
+    list,
+  });
+  await newBlog.save();
+  res.status(201).json({ msg: "Blog Created" });
+});
 
 exports.unwindBlog = async (req, res) => {
   console.log(req);

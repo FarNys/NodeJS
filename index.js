@@ -8,6 +8,10 @@ const searchRouter = require("./routes/searchRouter");
 const registerRouter = require("./routes/registerRouter");
 const loginRouter = require("./routes/loginRouter");
 const blogRouter = require("./routes/blogRouter");
+//ERROR CLASS AND HANDLER
+const AppError = require("./utils/appError");
+const errorHandling = require("./utils/errorHandling");
+//
 dotenv.config({ path: "./config.env" });
 
 const app = express();
@@ -41,3 +45,10 @@ app.use("/api/v1/products", productRouter);
 app.use("/api/v1/product/search", searchRouter);
 //BLOG ROUTERS
 app.use("/api/v1/blogs", blogRouter);
+
+//HANDLE IF THERE IS ALL UNDEFINED ROUTE
+app.all("*", (req, res, next) => {
+  next(new AppError(`Cant Take the Url ${req.originalUrl}`, 404));
+});
+app.use(errorHandling);
+//
