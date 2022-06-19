@@ -1,3 +1,4 @@
+const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const Blog = require("./../models/Blog");
 
@@ -92,3 +93,15 @@ exports.aggregateBlog = async (req, res) => {
     console.log(error);
   }
 };
+
+exports.getSingleBlog = catchAsync(async (req, res, next) => {
+  const id = req.params.id;
+  if (id.length !== 24) {
+    next(new AppError("cannot find blog with this id", 404));
+  }
+  const blog = await Blog.findById(id).select("-_id -__v");
+  if (!blog) {
+    next(new AppError("cannot find blog with this id", 404));
+  }
+  res.status(200).json(blog);
+});

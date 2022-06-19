@@ -29,15 +29,15 @@ const BlogSchema = mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-  },
-  {
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
   }
+  // {
+  //   toJSON: { virtuals: true },
+  //   toObject: { virtuals: true },
+  // }
 );
 
-BlogSchema.virtual("divideByTwo").get(function () {
-  return this.point / 2;
-});
+// BlogSchema.virtual("divideByTwo").get(function () {
+//   return this.point / 2;
+// });
 
 module.exports = mongoose.model("blogs", BlogSchema);
