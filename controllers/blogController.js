@@ -2,17 +2,20 @@ const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const Blog = require("./../models/Blog");
 
-exports.getAllBlogs = async (req, res) => {
-  try {
-    const data = await Blog.find({});
-    if (data.length === 0) {
-      return res.status(202).json({ msg: "No Blog Found" });
-    }
-    res.status(200).json(data);
-  } catch (error) {
-    console.log(error);
+exports.getAllBlogs = catchAsync(async (req, res, next) => {
+  let query;
+  let queryStr = JSON.stringify(req.query);
+  queryStr = queryStr.replace(
+    /\b(gt|gte|lt|lte|in)\b/g,
+    (match) => `$${match}`
+  );
+  query = JSON.parse(queryStr);
+  const data = await Blog.find(query).populate("user");
+  if (data.length === 0) {
+    return next(new AppError("no data found", 204));
   }
-};
+  res.status(200).json(data);
+});
 exports.deleteAllBlogs = async (req, res) => {
   try {
     const getBlogs = await Blog.deleteMany({});
@@ -24,16 +27,18 @@ exports.deleteAllBlogs = async (req, res) => {
 };
 
 exports.createBlog = catchAsync(async (req, res, next) => {
+  console.log(req.user);
   const { title, desc, point, list } = req.body;
 
   const newBlog = new Blog({
+    user: req.user.id,
     title,
     desc,
     point,
     list,
   });
-  await newBlog.save();
-  res.status(201).json({ msg: "Blog Created" });
+  const blog = await newBlog.save();
+  res.status(201).json({ data: blog });
 });
 
 exports.unwindBlog = async (req, res) => {
@@ -94,14 +99,25 @@ exports.aggregateBlog = async (req, res) => {
   }
 };
 
+// exports.getSingleBlog = catchAsync(async (req, res, next) => {
+//   const id = req.params.id;
+//   if (id.length !== 24) {
+//     next(new AppError("cannot find blog with this id", 404));
+//   }
+//   const blog = await Blog.findById(id).select("-_id -__v");
+//   if (!blog) {
+//     next(new AppError("cannot find blog with this id", 404));
+//   }
+//   res.status(200).json(blog);
+// });
 exports.getSingleBlog = catchAsync(async (req, res, next) => {
   const id = req.params.id;
-  if (id.length !== 24) {
-    next(new AppError("cannot find blog with this id", 404));
-  }
+  // if (id.length !== 24) {
+  //   next(new AppError("cannot find blog with this id", 404));
+  // }
   const blog = await Blog.findById(id).select("-_id -__v");
   if (!blog) {
-    next(new AppError("cannot find blog with this id", 404));
+    return next(new AppError("cannot find blog with this id", 404));
   }
   res.status(200).json(blog);
 });

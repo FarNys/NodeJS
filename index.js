@@ -11,6 +11,7 @@ const blogRouter = require("./routes/blogRouter");
 //ERROR CLASS AND HANDLER
 const AppError = require("./utils/appError");
 const errorHandling = require("./utils/errorHandling");
+const errorHandler = require("./utils/errHandler");
 //
 dotenv.config({ path: "./config.env" });
 
@@ -18,6 +19,11 @@ const app = express();
 //JSON WILL SHOW AS UNDEFINED IN POST DATA WITHOUT THIS
 app.use(express.json());
 app.use(cors());
+
+// Dev logging middleware
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
 
 const router = express.Router();
 const PORT = 3456;
@@ -50,5 +56,5 @@ app.use("/api/v1/blogs", blogRouter);
 app.all("*", (req, res, next) => {
   next(new AppError(`Cant Take the Url ${req.originalUrl}`, 404));
 });
-app.use(errorHandling);
-//
+app.use(errorHandler);
+//e
