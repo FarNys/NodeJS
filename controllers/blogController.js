@@ -4,13 +4,33 @@ const Blog = require("./../models/Blog");
 
 exports.getAllBlogs = catchAsync(async (req, res, next) => {
   let query;
-  let queryStr = JSON.stringify(req.query);
+
+  //CREATE A CLONE FROM SENT QUERY
+  const reqQuery = { ...req.query };
+
+  //WE CAN DEFINE EXCLUDE LIST TO PREVENT IT FROM SEARCHING!
+  let excludeList = ["title"];
+  excludeList.forEach((el) => delete reqQuery[el]);
+
+  //RE BUILD SENT QUERY FOR CHANGING gte & ... to $gte & ...
+  let queryStr = JSON.stringify(reqQuery);
   queryStr = queryStr.replace(
     /\b(gt|gte|lt|lte|in)\b/g,
     (match) => `$${match}`
   );
-  query = JSON.parse(queryStr);
-  const data = await Blog.find(query).populate("user");
+
+  //CHANGE BACK TO DEFAULT JSON FILE
+  query = Blog.find(JSON.parse(queryStr));
+
+  //CHECK IF THERE IS A (SELECTED} FIELD TO SHOW
+  // THEN ADD SELECT METHOD TO JUST RETURN THAT FIELD
+  if (req.query.selected) {
+    const fields = req.query.selected.split(",").join(" ");
+    console.log(fields);
+    query = query.select(fields);
+  }
+
+  const data = await query.populate("user");
   if (data.length === 0) {
     return next(new AppError("no data found", 204));
   }
