@@ -8,6 +8,8 @@ const searchRouter = require("./routes/searchRouter");
 const registerRouter = require("./routes/registerRouter");
 const loginRouter = require("./routes/loginRouter");
 const blogRouter = require("./routes/blogRouter");
+const adminRouter = require("./routes/adminRouter");
+
 //ERROR CLASS AND HANDLER
 const AppError = require("./utils/appError");
 const errorHandling = require("./utils/errorHandling");
@@ -51,6 +53,9 @@ app.use("/api/v1/products", productRouter);
 app.use("/api/v1/product/search", searchRouter);
 //BLOG ROUTERS
 app.use("/api/v1/blogs", blogRouter);
+
+//ADMIN ROUTER
+app.use("/admin", adminRouter);
 
 //HANDLE IF THERE IS ALL UNDEFINED ROUTE
 app.all("*", (req, res, next) => {
